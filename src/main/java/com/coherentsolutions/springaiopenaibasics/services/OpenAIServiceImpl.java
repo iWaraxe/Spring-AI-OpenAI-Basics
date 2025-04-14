@@ -26,8 +26,27 @@ public class OpenAIServiceImpl implements OpenAIService {
     @Value("classpath:templates/get-capital-prompt.st")
     private Resource getCapitalPrompt;
 
+    @Value("classpath:templates/get-capital-with-info.st")
+    private Resource getCapitalPromptWithInfo;
+
     public OpenAIServiceImpl(ChatModel chatModel) {
         this.chatModel = chatModel;
+    }
+
+    @Override
+    public Answer getCapitalWithInfo(GetCapitalRequest getCapitalRequest) {
+        // In Spring AI M7, PromptTemplate is in a different package
+        PromptTemplate promptTemplate = new PromptTemplate(getCapitalPromptWithInfo);
+
+        // In M7, we use render() and create a Prompt with the rendered string
+        Prompt prompt = new Prompt(
+                promptTemplate.render(Map.of("stateOrCountry", getCapitalRequest.stateOrCountry()))
+        );
+
+        ChatResponse response = chatModel.call(prompt);
+
+        // Using getText() instead of getContent() in M7
+        return new Answer(response.getResult().getOutput().getText());
     }
 
     @Override

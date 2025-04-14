@@ -10,6 +10,8 @@ import com.coherentsolutions.springaiopenaibasics.model.Question;
  */
 public interface OpenAIService {
 
+    Answer getCapitalWithInfo(GetCapitalRequest getCapitalRequest);
+
     Answer getCapital(GetCapitalRequest getCapitalRequest);
 
     String getAnswer(String question);
