@@ -2,6 +2,7 @@ package com.coherentsolutions.springaiopenaibasics.services;
 
 import com.coherentsolutions.springaiopenaibasics.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 @Service
 public class AnthropicServiceImpl implements AnthropicService {
 
-    private final ChatModel chatModel;
+    private final AnthropicChatModel chatModel;
 
     @Value("classpath:templates/get-capital-prompt.st")
     private Resource getCapitalPrompt;
@@ -35,8 +36,10 @@ public class AnthropicServiceImpl implements AnthropicService {
 
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private AnthropicChatModel anthropicChatModel;
 
-    public AnthropicServiceImpl(@Qualifier("anthropicChatModel") ChatModel chatModel) {
+    public AnthropicServiceImpl(AnthropicChatModel chatModel) {
         this.chatModel = chatModel;
     }
 

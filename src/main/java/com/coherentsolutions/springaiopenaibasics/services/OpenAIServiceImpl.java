@@ -9,6 +9,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
 @Service
 public class OpenAIServiceImpl implements OpenAIService {
 
-    private final ChatModel chatModel;
+    private final OpenAiChatModel chatModel;
 
     @Value("classpath:templates/get-capital-prompt.st")
     private Resource getCapitalPrompt;
@@ -38,7 +39,7 @@ public class OpenAIServiceImpl implements OpenAIService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public OpenAIServiceImpl(@Qualifier("openAiChatModel") ChatModel chatModel) {
+    public OpenAIServiceImpl(OpenAiChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
