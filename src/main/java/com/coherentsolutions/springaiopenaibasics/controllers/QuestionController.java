@@ -1,9 +1,6 @@
 package com.coherentsolutions.springaiopenaibasics.controllers;
 
-import com.coherentsolutions.springaiopenaibasics.model.Answer;
-import com.coherentsolutions.springaiopenaibasics.model.GetCapitalRequest;
-import com.coherentsolutions.springaiopenaibasics.model.GetCapitalResponse;
-import com.coherentsolutions.springaiopenaibasics.model.Question;
+import com.coherentsolutions.springaiopenaibasics.model.*;
 import com.coherentsolutions.springaiopenaibasics.services.OpenAIService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +22,7 @@ public class QuestionController {
     }
 
     @PostMapping("/capitalWithInfo")
-    public Answer getCapitalWithInfo(@RequestBody GetCapitalRequest getCapitalRequest) {
+    public GetCapitalWithInfoResponse getCapitalWithInfo(@RequestBody GetCapitalRequest getCapitalRequest) {
         return this.openAIService.getCapitalWithInfo(getCapitalRequest);
     }
 

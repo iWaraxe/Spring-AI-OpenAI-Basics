@@ -1,9 +1,6 @@
 package com.coherentsolutions.springaiopenaibasics.services;
 
-import com.coherentsolutions.springaiopenaibasics.model.Answer;
-import com.coherentsolutions.springaiopenaibasics.model.GetCapitalRequest;
-import com.coherentsolutions.springaiopenaibasics.model.GetCapitalResponse;
-import com.coherentsolutions.springaiopenaibasics.model.Question;
+import com.coherentsolutions.springaiopenaibasics.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,19 +42,26 @@ public class OpenAIServiceImpl implements OpenAIService {
     }
 
     @Override
-    public Answer getCapitalWithInfo(GetCapitalRequest getCapitalRequest) {
+    public GetCapitalWithInfoResponse getCapitalWithInfo(GetCapitalRequest getCapitalRequest) {
+
+        BeanOutputConverter<GetCapitalWithInfoResponse> converter = new BeanOutputConverter<>(GetCapitalWithInfoResponse.class);
+        String format = converter.getFormat();
+
         // In Spring AI M7, PromptTemplate is in a different package
         PromptTemplate promptTemplate = new PromptTemplate(getCapitalPromptWithInfo);
 
         // In M7, we use render() and create a Prompt with the rendered string
         Prompt prompt = new Prompt(
-                promptTemplate.render(Map.of("stateOrCountry", getCapitalRequest.stateOrCountry()))
+                promptTemplate.render(Map.of(
+                        "stateOrCountry", getCapitalRequest.stateOrCountry(),
+                        "format", format
+                ))
         );
 
         ChatResponse response = chatModel.call(prompt);
 
         // Using getText() instead of getContent() in M7
-        return new Answer(response.getResult().getOutput().getText());
+        return converter.convert(response.getResult().getOutput().getText());
     }
 
     @Override

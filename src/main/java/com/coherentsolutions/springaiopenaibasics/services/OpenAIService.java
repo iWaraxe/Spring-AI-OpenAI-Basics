@@ -1,9 +1,6 @@
 package com.coherentsolutions.springaiopenaibasics.services;
 
-import com.coherentsolutions.springaiopenaibasics.model.Answer;
-import com.coherentsolutions.springaiopenaibasics.model.GetCapitalRequest;
-import com.coherentsolutions.springaiopenaibasics.model.GetCapitalResponse;
-import com.coherentsolutions.springaiopenaibasics.model.Question;
+import com.coherentsolutions.springaiopenaibasics.model.*;
 
 /**
  * Service interface for OpenAI interactions.
@@ -11,7 +8,7 @@ import com.coherentsolutions.springaiopenaibasics.model.Question;
  */
 public interface OpenAIService {
 
-    Answer getCapitalWithInfo(GetCapitalRequest getCapitalRequest);
+    GetCapitalWithInfoResponse getCapitalWithInfo(GetCapitalRequest getCapitalRequest);
 
     GetCapitalResponse getCapital(GetCapitalRequest getCapitalRequest);
 
