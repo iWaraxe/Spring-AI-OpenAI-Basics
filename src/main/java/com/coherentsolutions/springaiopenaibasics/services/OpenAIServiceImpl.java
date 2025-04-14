@@ -3,10 +3,14 @@ package com.coherentsolutions.springaiopenaibasics.services;
 import com.coherentsolutions.springaiopenaibasics.model.Answer;
 import com.coherentsolutions.springaiopenaibasics.model.GetCapitalRequest;
 import com.coherentsolutions.springaiopenaibasics.model.Question;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,9 @@ public class OpenAIServiceImpl implements OpenAIService {
 
     @Value("classpath:templates/get-capital-with-info.st")
     private Resource getCapitalPromptWithInfo;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public OpenAIServiceImpl(ChatModel chatModel) {
         this.chatModel = chatModel;
@@ -61,8 +68,16 @@ public class OpenAIServiceImpl implements OpenAIService {
 
         ChatResponse response = chatModel.call(prompt);
 
-        // Using getText() instead of getContent() in M7
-        return new Answer(response.getResult().getOutput().getText());
+        System.out.println(response.getResult().getOutput().getText());
+        String responseString;
+        try {
+            JsonNode jsonNode = objectMapper.readTree(response.getResult().getOutput().getText());
+            responseString = jsonNode.get("answer").asText();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new Answer(responseString);
     }
 
     @Override
