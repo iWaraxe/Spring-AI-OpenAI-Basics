@@ -5,6 +5,7 @@ import com.coherentsolutions.springaiopenaibasics.model.Question;
 import com.coherentsolutions.springaiopenaibasics.services.OpenAIService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Exposes an endpoint that accepts questions and returns AI-generated answers.
  */
 @RestController
+@RequestMapping("/api/ai")
 public class QuestionController {
 
     private final OpenAIService openAIService;
@@ -20,7 +22,7 @@ public class QuestionController {
         this.openAIService = openAIService;
     }
 
-    @PostMapping
+    @PostMapping("/ask")
     public Answer askQuestion(@RequestBody Question question) {
         return openAIService.getAnswer(question);
     }
