@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/ai")
-public class QuestionController {
+public class OpenAiQuestionController {
 
     private final OpenAIService openAIService;
 
-    public QuestionController(OpenAIService openAIService) {
+    public OpenAiQuestionController(OpenAIService openAIService) {
         this.openAIService = openAIService;
     }
 

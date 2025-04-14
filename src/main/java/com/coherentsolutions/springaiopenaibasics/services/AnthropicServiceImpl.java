@@ -1,8 +1,6 @@
 package com.coherentsolutions.springaiopenaibasics.services;
 
 import com.coherentsolutions.springaiopenaibasics.model.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -20,12 +18,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Implementation of OpenAIService that uses Spring AI's ChatModel
- * to interact with OpenAI's API. This service converts user questions
+ * Implementation of AnthropicService that uses Spring AI's ChatModel
+ * to interact with Anthropic's Claude API. This service converts user questions
  * into AI-generated responses.
  */
 @Service
-public class OpenAIServiceImpl implements OpenAIService {
+public class AnthropicServiceImpl implements AnthropicService {
 
     private final ChatModel chatModel;
 
@@ -38,20 +36,17 @@ public class OpenAIServiceImpl implements OpenAIService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public OpenAIServiceImpl(@Qualifier("openAiChatModel") ChatModel chatModel) {
+    public AnthropicServiceImpl(@Qualifier("anthropicChatModel") ChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
     @Override
     public GetCapitalWithInfoResponse getCapitalWithInfo(GetCapitalRequest getCapitalRequest) {
-
         BeanOutputConverter<GetCapitalWithInfoResponse> converter = new BeanOutputConverter<>(GetCapitalWithInfoResponse.class);
         String format = converter.getFormat();
 
-        // In Spring AI M7, PromptTemplate is in a different package
         PromptTemplate promptTemplate = new PromptTemplate(getCapitalPromptWithInfo);
 
-        // In M7, we use render() and create a Prompt with the rendered string
         Prompt prompt = new Prompt(
                 promptTemplate.render(Map.of(
                         "stateOrCountry", getCapitalRequest.stateOrCountry(),
@@ -60,22 +55,16 @@ public class OpenAIServiceImpl implements OpenAIService {
         );
 
         ChatResponse response = chatModel.call(prompt);
-
-        // Using getText() instead of getContent() in M7
         return converter.convert(response.getResult().getOutput().getText());
     }
 
     @Override
     public GetCapitalResponse getCapital(GetCapitalRequest getCapitalRequest) {
-        // Using Spring AI M7's BeanOutputConverter
-        // Create a converter to handle structured output conversion
         BeanOutputConverter<GetCapitalResponse> converter = new BeanOutputConverter<>(GetCapitalResponse.class);
         String format = converter.getFormat();
 
-        // In Spring AI M7, PromptTemplate is in a different package
         PromptTemplate promptTemplate = new PromptTemplate(getCapitalPrompt);
 
-        // Create the prompt with parameters for the template
         Prompt prompt = new Prompt(
                 promptTemplate.render(Map.of(
                         "stateOrCountry", getCapitalRequest.stateOrCountry(),
@@ -86,43 +75,17 @@ public class OpenAIServiceImpl implements OpenAIService {
         return converter.convert(response.getResult().getOutput().getText());
     }
 
-    /**
-     * Extracts the JSON content from a response that might be wrapped in markdown code blocks
-     * or other formatting elements.
-     */
-    private String extractJsonFromResponse(String response) {
-        // Try to extract JSON if it's wrapped in markdown code blocks
-        Pattern pattern = Pattern.compile("```(?:json)?\\s*\\n?(.*?)\\n?```", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(response);
-
-        if (matcher.find()) {
-            return matcher.group(1).trim();
-        }
-
-        // If no code blocks found, return the original response
-        // (after removing any leading/trailing backticks if present)
-        return response.replaceAll("^`+|`+$", "").trim();
-    }
-
     @Override
     public Answer getAnswer(Question question) {
-        // In Spring AI M7, we create the Prompt directly without PromptTemplate
         Prompt prompt = new Prompt(question.question());
         ChatResponse response = chatModel.call(prompt);
-
-        // In Spring AI M7, we use getText() instead of getContent()
         return new Answer(response.getResult().getOutput().getText());
     }
 
     @Override
     public String getAnswer(String question) {
-        // In Spring AI M7, we can directly create a Prompt without using PromptTemplate
         Prompt prompt = new Prompt(question);
-
-        // Call the ChatModel with our prompt to get a response
         ChatResponse response = chatModel.call(prompt);
-
-        // Extract and return the text content from the response
         return response.getResult().getOutput().getText();
     }
 }
