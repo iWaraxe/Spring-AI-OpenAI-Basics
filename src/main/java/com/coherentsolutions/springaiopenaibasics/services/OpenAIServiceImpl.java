@@ -16,6 +16,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of OpenAIService that uses Spring AI's ChatModel
@@ -68,16 +70,40 @@ public class OpenAIServiceImpl implements OpenAIService {
 
         ChatResponse response = chatModel.call(prompt);
 
-        System.out.println(response.getResult().getOutput().getText());
+        String responseText = response.getResult().getOutput().getText();
+        System.out.println(responseText);
+
+        String jsonContent = extractJsonFromResponse(responseText);
         String responseString;
+
         try {
-            JsonNode jsonNode = objectMapper.readTree(response.getResult().getOutput().getText());
+            JsonNode jsonNode = objectMapper.readTree(jsonContent);
             responseString = jsonNode.get("answer").asText();
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to parse JSON response: " + jsonContent, e);
         }
 
+        System.out.println(responseString);
+
         return new Answer(responseString);
+    }
+
+    /**
+     * Extracts the JSON content from a response that might be wrapped in markdown code blocks
+     * or other formatting elements.
+     */
+    private String extractJsonFromResponse(String response) {
+        // Try to extract JSON if it's wrapped in markdown code blocks
+        Pattern pattern = Pattern.compile("```(?:json)?\\s*\\n?(.*?)\\n?```", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(response);
+
+        if (matcher.find()) {
+            return matcher.group(1).trim();
+        }
+
+        // If no code blocks found, return the original response
+        // (after removing any leading/trailing backticks if present)
+        return response.replaceAll("^`+|`+$", "").trim();
     }
 
     @Override
