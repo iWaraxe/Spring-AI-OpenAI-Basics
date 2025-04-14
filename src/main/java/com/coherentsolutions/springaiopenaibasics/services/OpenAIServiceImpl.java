@@ -2,6 +2,7 @@ package com.coherentsolutions.springaiopenaibasics.services;
 
 import com.coherentsolutions.springaiopenaibasics.model.Answer;
 import com.coherentsolutions.springaiopenaibasics.model.GetCapitalRequest;
+import com.coherentsolutions.springaiopenaibasics.model.GetCapitalResponse;
 import com.coherentsolutions.springaiopenaibasics.model.Question;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,6 +11,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -59,33 +61,24 @@ public class OpenAIServiceImpl implements OpenAIService {
     }
 
     @Override
-    public Answer getCapital(GetCapitalRequest getCapitalRequest) {
+    public GetCapitalResponse getCapital(GetCapitalRequest getCapitalRequest) {
+        // Using Spring AI M7's BeanOutputConverter
+        // Create a converter to handle structured output conversion
+        BeanOutputConverter<GetCapitalResponse> converter = new BeanOutputConverter<>(GetCapitalResponse.class);
+        String format = converter.getFormat();
+
         // In Spring AI M7, PromptTemplate is in a different package
         PromptTemplate promptTemplate = new PromptTemplate(getCapitalPrompt);
 
         // Create the prompt with parameters for the template
         Prompt prompt = new Prompt(
-                promptTemplate.render(Map.of("stateOrCountry", getCapitalRequest.stateOrCountry()))
+                promptTemplate.render(Map.of(
+                        "stateOrCountry", getCapitalRequest.stateOrCountry(),
+                        "format", format))
         );
 
         ChatResponse response = chatModel.call(prompt);
-
-        String responseText = response.getResult().getOutput().getText();
-        System.out.println(responseText);
-
-        String jsonContent = extractJsonFromResponse(responseText);
-        String responseString;
-
-        try {
-            JsonNode jsonNode = objectMapper.readTree(jsonContent);
-            responseString = jsonNode.get("answer").asText();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse JSON response: " + jsonContent, e);
-        }
-
-        System.out.println(responseString);
-
-        return new Answer(responseString);
+        return converter.convert(response.getResult().getOutput().getText());
     }
 
     /**
