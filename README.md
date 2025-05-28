@@ -38,7 +38,7 @@ This repository serves as a complete learning resource for Spring AI, covering e
 ## 🛠️ Technologies Used
 
 - **Spring Boot 3.4.4** - Application framework
-- **Spring AI 1.0.0-M7** - AI integration framework
+- **Spring AI 1.0.0** - AI integration framework
 - **Java 21** - Programming language
 - **Maven** - Build tool
 - **JUnit 5** - Testing framework
