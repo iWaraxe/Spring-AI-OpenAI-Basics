@@ -1,6 +1,6 @@
-# Spring AI OpenAI Basics
+# L2ChatModel - Spring AI ChatModel Fundamentals
 
-A comprehensive tutorial repository demonstrating Spring AI integration with multiple AI providers. This repository contains 17 progressive branches, each showcasing different aspects of AI integration in Spring Boot applications.
+A comprehensive tutorial repository for Lecture 2 of the Spring AI Mastery course, demonstrating Spring AI ChatModel integration with multiple AI providers. This repository contains 17 progressive branches, each showcasing different aspects of AI integration in Spring Boot applications.
 
 ## 🚀 Overview
 
@@ -55,8 +55,8 @@ This repository serves as a complete learning resource for Spring AI, covering e
 ### Clone and Setup
 
 ```bash
-git clone https://github.com/iWaraxe/Spring-AI-OpenAI-Basics.git
-cd "Spring AI OpenAI Basics"
+git clone https://github.com/iWaraxe/L2ChatModel.git
+cd L2ChatModel
 ```
 
 ### Configuration
@@ -235,9 +235,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Perplexity API Documentation](https://docs.perplexity.ai/)
 - [Mistral AI Documentation](https://docs.mistral.ai/)
 
+## 📚 Course Context
+
+This repository is **Lecture 2** in the Spring AI Mastery course series:
+- **L1**: Introduction to Spring AI (Prerequisites)
+- **L2**: ChatModel Fundamentals (This Repository)
+- **L3**: Structured Output
+- **L4**: AI Chat Applications
+- **L5**: RAG (Retrieval-Augmented Generation)
+- **L6**: Tool Calling
+- **L7**: Image Generation
+- **L8**: Voice & Audio
+
 ## 🎯 Learning Objectives
 
-By the end of this tutorial series, you will understand:
+By the end of this lecture, you will understand:
 
 1. **Spring AI Fundamentals**: How to integrate AI into Spring applications
 2. **Provider Comparison**: When to choose different AI providers
